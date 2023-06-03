@@ -1,0 +1,30 @@
+[
+ {
+  "Staff_Name": "peter",
+  "Staff_Id": 45,
+  "Staff_Type": "head master",
+  "Staff_Address": "tell drive, tx",
+  "Staff_ZipCode": 79415
+ },
+ {
+  "Staff_Name": "mary",
+  "Staff_Id": 54,
+  "Staff_Type": "science teacher",
+  "Staff_Address": "mcneil drive, tx",
+  "Staff_ZipCode": 79416
+ },
+ {
+  "Staff_Name": "yao",
+  "Staff_Id": 89,
+  "Staff_Type": "maths teacher",
+  "Staff_Address": "keeper drive, tx",
+  "Staff_ZipCode": 79876
+ },
+ {
+  "Staff_Name": "umran",
+  "Staff_Id": 90,
+  "Staff_Type": "PET",
+  "Staff_Address": "irish drive, tx",
+  "Staff_ZipCode": 78562
+ }
+]

@@ -1,15 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using SchoolAdministration.Utils;
+﻿using SchoolAdministration.Utils;
 using SchoolAdministration.DTO;
 using Aspose.Cells;
 using LoadOptions = Aspose.Cells.LoadOptions;
-using System.Data;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Cell = DocumentFormat.OpenXml.Spreadsheet.Cell;
 using Newtonsoft.Json;
-using Microsoft.Extensions.Configuration.Json;
+
 
 namespace SchoolAdministration.Services
 {
@@ -25,9 +19,11 @@ namespace SchoolAdministration.Services
 
         }
 
+        string path = "C:\\Users\\rohit\\source\\repos\\WebApplication5\\WebApplication5";
+
         public async Task<string> GetStudentDetails()
         {
-            string query = @"select * from sql9619976.Students";
+            string query = @"select * from School_Administration.students";
             string tabledata = await _Execute.ExecuteQuery(query);
             return tabledata;
         }
@@ -46,27 +42,29 @@ namespace SchoolAdministration.Services
             //Create workbook from stream
             Aspose.Cells.Workbook workbook = new Aspose.Cells.Workbook(stream, loadOptions);
 
-            workbook.Save("C:\\Users\\rohit\\source\\repos\\WebApplication5\\WebApplication5\\Student_Details.xlsx");
+            workbook.Save(path+"\\Student_Details.xlsx");
         }
 
         public async Task<List<Student>> ConvertFileToList()
         {
-
-            var workbook = new Aspose.Cells.Workbook("C:\\Users\\rohit\\source\\repos\\WebApplication5\\WebApplication5\\Student_Details.xlsx");
+            
+            var workbook = new Aspose.Cells.Workbook(path + "\\Student_Details.xlsx");
             workbook.Worksheets.RemoveAt("Evaluation Warning");
             workbook.Worksheets.RemoveAt("Evaluation Warning (1)");
-            workbook.Save("C:\\Users\\rohit\\source\\repos\\WebApplication5\\WebApplication5\\Output.json");
-            string text = File.ReadAllText("C:\\Users\\rohit\\source\\repos\\WebApplication5\\WebApplication5\\Output.json");
+            workbook.Save(path + "\\Output.json");
+            string text = File.ReadAllText(path + "\\Output.json");
             
             var Student_List = JsonConvert.DeserializeObject<List<Student>>(text);
             return Student_List;
-
-
-
+        
         }
-       /* public async Task<List<Student>> StringToObject()
+        public async Task<bool> InsertExcelStudentData(List<Student> student)
         {
-            
-        }*/
+            string query = @"INSERT INTO School_Administration.Students (Student_Id, Student_Name, Student_Grade, Student_Address, Student_ZipCode)
+            VALUES (@Student_Id, @Student_Name, @Student_Grade, @Student_Address, @Student_ZipCode);";
+            bool Inserted = await _Execute.ExecuteQueryWithParamsStudents(query,student);
+            return (Inserted != null?true:false);
+        }
+    
     }
 }

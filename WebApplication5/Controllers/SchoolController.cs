@@ -66,14 +66,17 @@ namespace SchoolAdministration.Controllers
                 {
                     _student.ConvertBase64ToFile(payload);
                     var Student_List = await _student.ConvertFileToList();
-                    
-                  
-
+                    bool inserted= await _student.InsertExcelStudentData(Student_List);
                     return Ok(Student_List);
                 }
                 else
                 {
-                    return Ok(payload);
+                    _staff.ConvertBase64ToFile(payload);
+                    var Staff_List = await _staff.ConvertFileToList();
+                    bool inserted = await _staff.InsertExcelStaffData(Staff_List);
+                    return Ok(Staff_List);
+
+                    
                 }
                 
             }
