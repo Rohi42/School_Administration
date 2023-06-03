@@ -56,13 +56,12 @@ namespace SchoolAdministration.Services
             return Staff_List;
 
         }
-        public async Task<bool> InsertExcelStaffData(List<Staff> staff)
+        public async Task<List<string>> InsertExcelStaffData(List<Staff> staff)
         {
             string query = @"INSERT INTO School_Administration.staff (Staff_Id, Staff_Name, Staff_Type, Staff_Address, Staff_ZipCode)
             VALUES (@Staff_Id, @Staff_Name, @Staff_Type, @Staff_Address, @Staff_ZipCode);";
-            bool Inserted = await _Execute.ExecuteQueryWithParamsStaff(query, staff);
-            return (Inserted != null ? true : false);
-
+            List<string> Inserted = await _Execute.ExecuteQueryWithParamsStaff(query, staff);
+            return (Inserted);
         }
     }
 }
