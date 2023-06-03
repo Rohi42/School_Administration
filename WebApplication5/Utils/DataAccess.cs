@@ -79,7 +79,7 @@ namespace SchoolAdministration.Utils
                     {
                         var command = new MySqlCommand(Query, connection);
                         command.Parameters.AddWithValue("@Staff_Id", staff.Staff_Id);
-                        command.Parameters.AddWithValue("@Staff_Id", staff.Staff_Id);
+                        command.Parameters.AddWithValue("@Staff_Name", staff.Staff_Name);
                         command.Parameters.AddWithValue("@Staff_Address", staff.Staff_Address);
                         command.Parameters.AddWithValue("@Staff_Type", staff.Staff_Type);
                         command.Parameters.AddWithValue("@Staff_ZipCode", staff.Staff_ZipCode);

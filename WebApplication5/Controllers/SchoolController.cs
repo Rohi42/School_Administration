@@ -26,7 +26,7 @@ namespace SchoolAdministration.Controllers
             try
             {
                 string Student_Data = await _student.GetStudentDetails();
-                return Ok(Student_Data);
+                return Ok((Student_Data.Length)==0 ?Student_Data:"No Student Data Found!!!!");
             }
             catch (Exception ex)
             {
@@ -44,7 +44,7 @@ namespace SchoolAdministration.Controllers
             try
             {
                 string Staff_Data = await _staff.GetStaffDetails();
-                return Ok(Staff_Data);
+                return Ok(Staff_Data.Length==0?Staff_Data:"No Staff Data Found!!!!");
             }
             catch (Exception ex)
             {
@@ -53,8 +53,8 @@ namespace SchoolAdministration.Controllers
 
         }
 
-        [HttpGet]
-        [Route("api/Parse")]
+        [HttpPost]
+        [Route("api/ParseBase64")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
@@ -69,16 +69,15 @@ namespace SchoolAdministration.Controllers
                     bool inserted= await _student.InsertExcelStudentData(Student_List);
                     return Ok(Student_List);
                 }
-                else
+                else if(payload.Category=="Staff")
                 {
                     _staff.ConvertBase64ToFile(payload);
                     var Staff_List = await _staff.ConvertFileToList();
                     bool inserted = await _staff.InsertExcelStaffData(Staff_List);
                     return Ok(Staff_List);
-
-                    
                 }
-                
+                else return BadRequest();
+
             }
             catch (Exception ex)
             {

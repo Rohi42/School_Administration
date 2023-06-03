@@ -58,8 +58,8 @@ namespace SchoolAdministration.Services
         }
         public async Task<bool> InsertExcelStaffData(List<Staff> staff)
         {
-            string query = @"INSERT INTO School_Administration.Staff (Staff_Id, Staff_Name, Staff_Type, Staff_ZipCode, Staff_Address)
-            VALUES (@Staff_Id, @Staff_Name, @Staff_Type, @Staff_ZipCode, @Staff_Address);";
+            string query = @"INSERT INTO School_Administration.staff (Staff_Id, Staff_Name, Staff_Type, Staff_Address, Staff_ZipCode)
+            VALUES (@Staff_Id, @Staff_Name, @Staff_Type, @Staff_Address, @Staff_ZipCode);";
             bool Inserted = await _Execute.ExecuteQueryWithParamsStaff(query, staff);
             return (Inserted != null ? true : false);
 
