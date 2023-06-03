@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
 using SchoolAdministration.DTO;
 using Newtonsoft.Json;
 using System.Data;
@@ -42,10 +42,10 @@ namespace SchoolAdministration.Utils
 
         }
 
-        public async Task<bool> ExecuteQueryWithParamsStudents(string Query, List<Student> Students)
+        public async Task<List<string>> ExecuteQueryWithParamsStudents(string Query, List<Student> Students)
         {
-            try
-            {
+            List<string> duplicates = new List<string>();
+            
                 foreach (var student in Students)
                 {
                     using (var connection = new MySqlConnection(configuration))
@@ -57,45 +57,55 @@ namespace SchoolAdministration.Utils
                         command.Parameters.AddWithValue("@Student_Name", student.Student_Name);
                         command.Parameters.AddWithValue("@Student_ZipCode", student.Student_ZipCode);
                         connection.Open();
+                    try
+                    {
                         command.ExecuteNonQuery();
                     }
+                    catch(Exception ex)
+                    {
+                        duplicates.Add(student.Student_Id.ToString());
+                        continue;
+                    }
+                    }
                 }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+                return duplicates;
+            
+            
 
         }
 
-        public async Task<bool> ExecuteQueryWithParamsStaff(string Query, List<Staff> Staff)
+    public async Task<List<string>> ExecuteQueryWithParamsStaff(string Query, List<Staff> Staff)
+    {
+        List<string> duplicates = new List<string>();
+
+        foreach (var staff in Staff)
         {
-            try
+            using (var connection = new MySqlConnection(configuration))
             {
-                foreach (var staff in Staff)
+                var command = new MySqlCommand(Query, connection);
+                command.Parameters.AddWithValue("@Staff_Id", staff.Staff_Id);
+                command.Parameters.AddWithValue("@Staff_Name", staff.Staff_Name);
+                command.Parameters.AddWithValue("@Staff_Address", staff.Staff_Address);
+                command.Parameters.AddWithValue("@Staff_Type", staff.Staff_Type);
+                command.Parameters.AddWithValue("@Staff_ZipCode", staff.Staff_ZipCode);
+                connection.Open();
+                try
                 {
-                    using (var connection = new MySqlConnection(configuration))
-                    {
-                        var command = new MySqlCommand(Query, connection);
-                        command.Parameters.AddWithValue("@Staff_Id", staff.Staff_Id);
-                        command.Parameters.AddWithValue("@Staff_Name", staff.Staff_Name);
-                        command.Parameters.AddWithValue("@Staff_Address", staff.Staff_Address);
-                        command.Parameters.AddWithValue("@Staff_Type", staff.Staff_Type);
-                        command.Parameters.AddWithValue("@Staff_ZipCode", staff.Staff_ZipCode);
-                        connection.Open();
-                        command.ExecuteNonQuery();
-                    }
+                    command.ExecuteNonQuery();
                 }
-                return true;
+                catch (Exception ex)
+                {
+                    duplicates.Add(staff.Staff_Id.ToString());
+                    continue;
+                }
             }
+        }
+        return duplicates;
 
-            
-            catch (Exception ex)
-            {
-                return false;
-            }
 
+
+
+    
         }
         
     }

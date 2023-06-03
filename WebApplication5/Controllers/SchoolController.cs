@@ -58,7 +58,7 @@ namespace SchoolAdministration.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> Insert_Excel_Data([FromQuery]Payload payload)
+        public async Task<IActionResult> Insert_Excel_Data([FromBody]Payload payload)
         {
             try
             {
@@ -66,17 +66,25 @@ namespace SchoolAdministration.Controllers
                 {
                     _student.ConvertBase64ToFile(payload);
                     var Student_List = await _student.ConvertFileToList();
-                    bool inserted= await _student.InsertExcelStudentData(Student_List);
+                    List<string> duplicates = await _student.InsertExcelStudentData(Student_List);
+                    if (duplicates.Count > 0)
+                    {
+                        return BadRequest("Error!!! Duplicate entries for records with existing Id's " + string.Join(", ", duplicates));
+                    }
                     return Ok(Student_List);
                 }
                 else if(payload.Category=="Staff")
                 {
                     _staff.ConvertBase64ToFile(payload);
                     var Staff_List = await _staff.ConvertFileToList();
-                    bool inserted = await _staff.InsertExcelStaffData(Staff_List);
+                    List<string> duplicates = await _staff.InsertExcelStaffData(Staff_List);
+                    if (duplicates.Count>0)
+                    {
+                        return BadRequest("Error!!! Duplicate entries for records with existing Id's "+ string.Join(", ", duplicates));
+                    }
                     return Ok(Staff_List);
                 }
-                else return BadRequest();
+                else return BadRequest("Error something went wrong!!!!");
 
             }
             catch (Exception ex)

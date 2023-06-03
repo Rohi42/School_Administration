@@ -58,12 +58,18 @@ namespace SchoolAdministration.Services
             return Student_List;
         
         }
-        public async Task<bool> InsertExcelStudentData(List<Student> student)
+        public async Task<List<string>> InsertExcelStudentData(List<Student> student)
         {
+            var students = RemoveDuplicates(student);
             string query = @"INSERT INTO School_Administration.Students (Student_Id, Student_Name, Student_Grade, Student_Address, Student_ZipCode)
             VALUES (@Student_Id, @Student_Name, @Student_Grade, @Student_Address, @Student_ZipCode);";
-            bool Inserted = await _Execute.ExecuteQueryWithParamsStudents(query,student);
-            return (Inserted != null?true:false);
+            List<string> duplicates = await _Execute.ExecuteQueryWithParamsStudents(query,students);
+            return (duplicates);
+        }
+
+        public List<Student> RemoveDuplicates(List<Student> student)
+        {
+            return student.DistinctBy(x=>x.Student_Id).ToList();
         }
     
     }
