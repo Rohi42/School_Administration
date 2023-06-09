@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SchoolAdministration.DTO;
 using SchoolAdministration.Services;
 
@@ -6,6 +7,7 @@ using SchoolAdministration.Services;
 namespace SchoolAdministration.Controllers
 {
     [ApiController]
+    
     public class SchoolController : Controller
     {
         
@@ -18,7 +20,9 @@ namespace SchoolAdministration.Controllers
             _staff = staff;
             
         }
+        
         [HttpGet]
+        [AllowAnonymous]
         [Route("api/Student_Details")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> Get_Student_Details()
@@ -26,7 +30,7 @@ namespace SchoolAdministration.Controllers
             try
             {
                 string Student_Data = await _student.GetStudentDetails();
-                return Ok((Student_Data.Length)==0 ?Student_Data:"No Student Data Found!!!!");
+                return Ok((Student_Data.Length)==0 ? "No Student Data Found!!!!" : Student_Data);
             }
             catch (Exception ex)
             {
@@ -44,7 +48,7 @@ namespace SchoolAdministration.Controllers
             try
             {
                 string Staff_Data = await _staff.GetStaffDetails();
-                return Ok(Staff_Data.Length==0?Staff_Data:"No Staff Data Found!!!!");
+                return Ok(Staff_Data.Length!=0?Staff_Data:"No Staff Data Found!!!!");
             }
             catch (Exception ex)
             {
@@ -66,7 +70,12 @@ namespace SchoolAdministration.Controllers
                 {
                     _student.ConvertBase64ToFile(payload);
                     var Student_List = await _student.ConvertFileToList();
+                    bool invalid_template = Student_List.All(x => x.Student_Id == 0);
                     List<string> duplicates = await _student.InsertExcelStudentData(Student_List);
+                    if (invalid_template)
+                    {
+                        return BadRequest("Error!!! Please upload a valid Student template.");
+                    }
                     if (duplicates.Count > 0)
                     {
                         return BadRequest("Error!!! Duplicate entries for records with existing Id's " + string.Join(", ", duplicates));
@@ -77,11 +86,16 @@ namespace SchoolAdministration.Controllers
                 {
                     _staff.ConvertBase64ToFile(payload);
                     var Staff_List = await _staff.ConvertFileToList();
+                    bool invalid_template = Staff_List.All(x => x.Staff_Id == 0);
+                    if(invalid_template)
+                    {
+                        return BadRequest("Error!!! Please upload a valid Staff template.");
+                    }
                     List<string> duplicates = await _staff.InsertExcelStaffData(Staff_List);
                     if (duplicates.Count>0)
                     {
-                        return BadRequest("Error!!! Duplicate entries for records with existing Id's "+ string.Join(", ", duplicates));
-                    }
+                        return BadRequest("Error!!! Duplicate entries for records with existing Id's "+ string.Join(", ", duplicates) +"and rest were inserted" );
+                  }
                     return Ok(Staff_List);
                 }
                 else return BadRequest("Error something went wrong!!!!");
