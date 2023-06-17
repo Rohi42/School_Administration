@@ -1,12 +1,9 @@
 using SchoolAdministration.Services;
 using SchoolAdministration.Utils;
 using Microsoft.Identity.Web;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Text;
-using SchoolAdministration.DTO;
-using System.Configuration;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,11 +16,28 @@ string connString = builder.Configuration.GetConnectionString("MyConnectionStrin
 builder.Services.AddTransient<DataAccess>(_ => new DataAccess(connString));
 
 
+string[] initialScopes = builder.Configuration.GetValue<string>("DownstreamApi:Scopes")?.Split(' ');
+
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration)
+    .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
+    .AddMicrosoftGraph(builder.Configuration.GetSection("DownstreamApi"))
+    .AddInMemoryTokenCaches();
+
+builder.Services.AddControllersWithViews(options =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+});
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAuthorization();
-//builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration);
+builder.Services.AddAuthenticationCore();
+
 var app = builder.Build();
 app.UseHttpsRedirection();
 
@@ -36,18 +50,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-/*app.Use(async (context, next) =>
-{
-    if (!context.User.Identity.IsAuthenticated)
-    {
-        context.Response.StatusCode = 401;
-        await context.Response.WriteAsync("Not Authenticated");
-    }
-    else await next();
-
-});*/
-app.UseAuthorization();
 app.UseAuthentication();
+
 
 app.MapControllers();
 
