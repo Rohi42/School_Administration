@@ -69,7 +69,7 @@ namespace SchoolAdministration.Services
 
         public List<Student> RemoveDuplicates(List<Student> student)
         {
-            return student.DistinctBy(x=>x.Student_Id).ToList();
+            return student.DistinctBy(x=>new { x.Student_Id}).ToList();
         }
     
     }
