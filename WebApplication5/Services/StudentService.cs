@@ -18,7 +18,7 @@ namespace SchoolAdministration.Services
             _Execute = Execute;
 
         }
-
+        
         string path = "C:\\Users\\rohit\\source\\repos\\WebApplication5\\WebApplication5";
 
         public async Task<string> GetStudentDetails()
@@ -70,6 +70,12 @@ namespace SchoolAdministration.Services
         public List<Student> RemoveDuplicates(List<Student> student)
         {
             return student.DistinctBy(x=>new { x.Student_Id}).ToList();
+        }
+        public async Task<string> GetStudentDataByID(int id)
+        {
+            string query = @"select * from School_Administration.students where Student_Id="+id+"";
+            string tabledata = await _Execute.ExecuteQuery(query);
+            return tabledata;
         }
     
     }

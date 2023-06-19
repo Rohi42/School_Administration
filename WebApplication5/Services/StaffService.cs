@@ -71,5 +71,12 @@ namespace SchoolAdministration.Services
         {
             return staff.DistinctBy(x => new { x.Staff_Id, x.Staff_Name }).ToList();
         }
+
+        public async Task<string> GetStaffDataByID(int id)
+        {
+            string query = @"SELECT * FROM school_administration.staff where Staff_Id=45;";
+            string tabledata = await _Execute.ExecuteQuery(query);
+            return tabledata;
+        }
     }
 }
