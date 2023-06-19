@@ -7,5 +7,6 @@ namespace SchoolAdministration.Services
         void ConvertBase64ToFile(Payload payload);
         Task<List<Staff>> ConvertFileToList();
         Task<List<string>> InsertExcelStaffData(List<Staff> staff);
+        Task<string> GetStaffDataByID(int id);
     }
 }

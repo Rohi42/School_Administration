@@ -23,9 +23,9 @@ namespace SchoolAdministration.Controllers
         
         [HttpGet]
         [AllowAnonymous]
-        [Route("api/Student_Details")]
+        [Route("api/AllStudentDetails")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> Get_Student_Details()
+        public async Task<IActionResult> GetAllStudentDetails()
         {
             try
             {
@@ -39,11 +39,11 @@ namespace SchoolAdministration.Controllers
         }
 
         [HttpGet]
-        [Route("api/Staff_Details")]
+        [Route("api/AllStaffDetails")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> Get_Staff_Details()
+        public async Task<IActionResult> GetAllStaffDetails()
         {
             try
             {
@@ -56,6 +56,44 @@ namespace SchoolAdministration.Controllers
             }
 
         }
+
+
+        [HttpPost]
+        [Route("api/GetStudentdetailsByID")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStudentByID(int ID)
+        {
+            try
+            {
+                var Student_data = await _student.GetStudentDataByID(ID);
+                return Ok((Student_data!=null? Student_data:"No student data found with this ID "+ID+""));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("api/GetStaffdetailsByID")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetStaffByID(int ID)
+        {
+            try
+            {
+                var Staff_data = await _staff.GetStaffDataByID(ID);
+                return Ok((Staff_data != null ? Staff_data : "No staff data found with this ID " + ID + ""));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         [HttpPost]
         [Route("api/ParseBase64")]
