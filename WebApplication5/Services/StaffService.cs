@@ -74,9 +74,19 @@ namespace SchoolAdministration.Services
 
         public async Task<string> GetStaffDataByID(int id)
         {
-            string query = @"SELECT * FROM school_administration.staff where Staff_Id=45;";
+            string query = @"SELECT * FROM school_administration.staff where Staff_Id="+id+"";
             string tabledata = await _Execute.ExecuteQuery(query);
             return tabledata;
+        }
+
+        public async Task<string>UpdateStaffDetails(Staff staff)
+        {
+            
+            List<Staff> staffList = new List<Staff>{new Staff { Staff_Id = staff.Staff_Id, Staff_Name= staff.Staff_Name,Staff_Type= staff.Staff_Type,Staff_Address= staff.Staff_Address,Staff_ZipCode= staff.Staff_ZipCode}};
+            string query = @"UPDATE School_Administration.staff SET Staff_Name =@Staff_Name , Staff_Type= @Staff_Type 
+                , Staff_Address= @Staff_Address , Staff_Zipcode=  @Staff_ZipCode   WHERE Staff_ID=@Staff_Id ;";
+            List<string> Inserted = await _Execute.ExecuteQueryWithParamsStaff(query, staffList);
+            return Inserted.ToString();
         }
     }
 }

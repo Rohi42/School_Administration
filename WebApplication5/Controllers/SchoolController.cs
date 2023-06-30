@@ -25,6 +25,8 @@ namespace SchoolAdministration.Controllers
         [AllowAnonymous]
         [Route("api/AllStudentDetails")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetAllStudentDetails()
         {
             try
@@ -67,8 +69,12 @@ namespace SchoolAdministration.Controllers
         {
             try
             {
-                var Student_data = await _student.GetStudentDataByID(ID);
-                return Ok((Student_data!=null? Student_data:"No student data found with this ID "+ID+""));
+                if (ID != null)
+                {
+                    var Student_data = await _student.GetStudentDataByID(ID);
+                    return Ok((Student_data != null ? Student_data : "No student data found with this ID " + ID + ""));
+                }
+                return BadRequest("Error!!! please enter the ID");
             }
             catch(Exception ex)
             {
@@ -85,8 +91,34 @@ namespace SchoolAdministration.Controllers
         {
             try
             {
-                var Staff_data = await _staff.GetStaffDataByID(ID);
-                return Ok((Staff_data != null ? Staff_data : "No staff data found with this ID " + ID + ""));
+                if (ID != null)
+                {
+                    var Staff_data = await _staff.GetStaffDataByID(ID);
+                    return Ok((Staff_data != null ? Staff_data : "No staff data found with this ID " + ID + ""));
+                }
+                return BadRequest("Error!!! please enter the ID");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("api/UpdateStaffdetailsByID")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> UpdateStaffByID(Staff staff)
+        {
+            try
+            {
+                if (staff != null)
+                {
+                    var Staff_data = await _staff.UpdateStaffDetails(staff);
+                    return Ok((Staff_data != null ? Staff_data : "No staff data found with this ID "));
+                }
+                return BadRequest("Error!!! please enter the ID");
             }
             catch (Exception ex)
             {
