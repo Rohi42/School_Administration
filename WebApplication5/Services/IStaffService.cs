@@ -8,5 +8,6 @@ namespace SchoolAdministration.Services
         Task<List<Staff>> ConvertFileToList();
         Task<List<string>> InsertExcelStaffData(List<Staff> staff);
         Task<string> GetStaffDataByID(int id);
+        Task<string> UpdateStaffDetails(Staff staff);
     }
 }
